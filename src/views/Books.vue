@@ -1,37 +1,45 @@
 <script setup>
-import {computed, defineProps, onMounted, ref} from "vue";
+import {computed, ref, watch} from 'vue'
+import { useRoute } from 'vue-router'
+import { getBooks } from './booksFetch.js'
 
-const { books, pageSize, currentPage } = defineProps({
+const route = useRoute()
 
-  books: function (){computed(() => this.fetchData())},
-  pageSize: Number,
-  currentPage: Number,
-  pagedBooks:
-      function() {
-        const startIndex = (currentPage - 1) * pageSize;
-        const endIndex = startIndex + pageSize;
-        return books.slice(startIndex, endIndex);
-      },
-  totalPages:
-      function() {
-        return Math.ceil(books.length / pageSize);
-      },
-  fetchData:
-      async function () {
-        try {
-          const response = await fetch('http://localhost:8080/api/books');
-          return await response.json();
-        } catch (error) {
-          console.error('Error fetching data:', error);
-        }
-      }
+const loading = ref(false)
+const post = ref(null)
+const error = ref(null)
+const currentPage = ref(1)
+const pageSize = ref(5)
+
+
+// watch the params of the route to fetch the data again
+watch(() => route.params.id, fetchData, { immediate: true })
+
+async function fetchData(id) {
+  error.value = post.value = null
+  loading.value = true
+
+  try {
+    // replace `getPost` with your data fetching util / API wrapper
+    const res = await getBooks(id)
+    console.log(res)
+    post.value = res
+  } catch (err) {
+    error.value = err.toString()
+  } finally {
+    loading.value = false
+  }
+}
+
+const pagedBooks = computed(() => {
+  const startIndex = (currentPage - 1) * pageSize;
+  const endIndex = startIndex + pageSize;
+  return post.value.slice(startIndex, endIndex);
 });
 
-// const books = computed(() => fetchData())
-
-
-
-
+const totalPages = computed(() => {
+  return Math.ceil(post.value.length / pageSize);
+});
 
 function nextPage() {
   if (currentPage.value < totalPages.value) {
@@ -44,9 +52,6 @@ function prevPage() {
     currentPage.value--;
   }
 }
-
-onMounted(() => fetchData());
-
 </script>
 
 <template>
