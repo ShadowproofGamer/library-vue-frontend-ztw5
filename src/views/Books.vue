@@ -1,61 +1,5 @@
-<script setup>
-import {computed, ref, watch} from 'vue'
-import { useRoute } from 'vue-router'
-import { getBooks } from './booksFetch.js'
-
-const route = useRoute()
-
-const loading = ref(false)
-const post = ref(null)
-const error = ref(null)
-const currentPage = ref(1)
-const pageSize = ref(5)
-
-
-// watch the params of the route to fetch the data again
-watch(() => route.params.id, fetchData, { immediate: true })
-
-async function fetchData(id) {
-  error.value = post.value = null
-  loading.value = true
-
-  try {
-    // replace `getPost` with your data fetching util / API wrapper
-    const res = await getBooks(id)
-    console.log(res)
-    post.value = res
-  } catch (err) {
-    error.value = err.toString()
-  } finally {
-    loading.value = false
-  }
-}
-
-const pagedBooks = computed(() => {
-  const startIndex = (currentPage - 1) * pageSize;
-  const endIndex = startIndex + pageSize;
-  return post.value.slice(startIndex, endIndex);
-});
-
-const totalPages = computed(() => {
-  return Math.ceil(post.value.length / pageSize);
-});
-
-function nextPage() {
-  if (currentPage.value < totalPages.value) {
-    currentPage.value++;
-  }
-}
-
-function prevPage() {
-  if (currentPage.value > 1) {
-    currentPage.value--;
-  }
-}
-</script>
-
 <template>
-  <div class="books">
+  <div class="books" v-if="pagedBooks.length">
     <h1>Books</h1>
     <table>
       <thead>
@@ -78,7 +22,54 @@ function prevPage() {
     <button @click="prevPage" :disabled="currentPage === 1">Previous</button>
     <button @click="nextPage" :disabled="currentPage === totalPages">Next</button>
   </div>
+  <div v-else>
+    <p>Loading data...</p>
+  </div>
 </template>
+<script>
+export default {
+  data() {
+    return {
+      books: [],
+      pageSize: 5,
+      currentPage: 1
+    }
+  },
+  computed: {
+    totalPages() {
+      return Math.ceil(this.books.length / this.pageSize);
+    },
+    pagedBooks() {
+      const startIndex = (this.currentPage - 1) * this.pageSize;
+      const endIndex = startIndex + this.pageSize;
+      return this.books.slice(startIndex, endIndex);
+    }
+  },
+  methods: {
+    async fetchData() {
+      try {
+        const response = await fetch('http://localhost:8080/books');
+        this.books = await response.json();
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    },
+    nextPage() {
+      if (this.currentPage < this.totalPages) {
+        this.currentPage++;
+      }
+    },
+    prevPage() {
+      if (this.currentPage > 1) {
+        this.currentPage--;
+      }
+    }
+  },
+  mounted() {
+    this.fetchData();
+  }
+}
+</script>
 
 <style scoped>
 /* Add your scoped styles here */
