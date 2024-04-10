@@ -89,6 +89,7 @@ export default {
     },
     async addBook() {
       try {
+        console.log(this.newBook.value);
         this.creating = false;
         const response = await fetch('http://localhost:8080/books', {
           method: 'POST',
