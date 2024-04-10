@@ -89,20 +89,20 @@ export default {
     },
     async addBook() {
       try {
-        console.log(this.newBook.value);
+        console.log(this.newBook);
         this.creating = false;
         const response = await fetch('http://localhost:8080/books', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify(this.newBook.value)
+          body: JSON.stringify(this.newBook)
         });
         if (response.ok) {
           // Book added successfully
           console.log('New book added successfully');
           // Reset the form fields
-          this.newBook.value = {
+          this.newBook = {
             title: '',
             pages: null,
             authorId: null
