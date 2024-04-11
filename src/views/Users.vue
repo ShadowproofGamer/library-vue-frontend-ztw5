@@ -35,7 +35,7 @@
       <input type="text" id="title" v-model="newUser.firstName" required>
       <br>
       <label for="pages">Last Name:</label>
-      <input type="number" id="pages" v-model.number="newUser.lastName" required>
+      <input type="text" id="pages" v-model="newUser.lastName" required>
       <button type="submit">Add User</button>
     </form>
   </div>
@@ -43,10 +43,10 @@
     <h1>Modify User</h1>
     <form @submit.prevent="updateUser">
       <label for="title">First Name:</label>
-      <input type="text" id="title" v-model="newUser.firstName" required>
+      <input type="text" id="title" v-model="modifiedUser.firstName" required>
       <br>
       <label for="pages">Last Name:</label>
-      <input type="number" id="pages" v-model.number="newUser.lastName" required>
+      <input type="text" id="pages" v-model="modifiedUser.lastName" required>
       <br>
       <button type="submit">Modify user</button>
     </form>

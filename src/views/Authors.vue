@@ -10,12 +10,12 @@
       </tr>
       </thead>
       <tbody>
-      <tr v-for="author in pagedAuthors" :key="author.authorId">
+      <tr v-for="author in pagedAuthors" :key="author.id">
         <td>{{ author.authorId }}</td>
         <td>{{ author.firstName }}</td>
         <td>{{ author.lastName }}</td>
         <td><button @click="modifying=true; modifiedAuthor=author">Update</button></td>
-        <td><button @click="deleteAuthor(author.authorId)">Delete</button></td>
+        <td><button @click="deleteAuthor(author.id)">Delete</button></td>
       </tr>
       </tbody>
     </table>
@@ -31,22 +31,22 @@
   <div v-if="creating">
     <h1>Add New Author</h1>
     <form @submit.prevent="addAuthor">
-      <label for="title">First Name:</label>
-      <input type="text" id="title" v-model="newAuthor.firstName" required>
+      <label for="firstName">First Name:</label>
+      <input type="text" id="firstName" v-model="newAuthor.firstName" required>
       <br>
-      <label for="pages">Last Name:</label>
-      <input type="number" id="pages" v-model.number="newAuthor.lastName" required>
+      <label for="lastName">Last Name:</label>
+      <input type="text" id="lastName" v-model="newAuthor.lastName" required>
       <button type="submit">Add Author</button>
     </form>
   </div>
   <div v-if="modifying">
     <h1>Modify Author</h1>
     <form @submit.prevent="updateAuthor">
-      <label for="title">First Name:</label>
-      <input type="text" id="title" v-model="newAuthor.firstName" required>
+      <label for="firstName">First Name:</label>
+      <input type="text" id="firstName" v-model="modifiedAuthor.firstName" required>
       <br>
-      <label for="pages">Last Name:</label>
-      <input type="number" id="pages" v-model.number="newAuthor.lastName" required>
+      <label for="lastName">Last Name:</label>
+      <input type="text" id="lastName" v-model="modifiedAuthor.lastName" required>
       <br>
       <button type="submit">Modify author</button>
     </form>
@@ -62,12 +62,10 @@ export default {
       creating: false,
       modifying:false,
       newAuthor: {
-        authorId: '',
         firstName: null,
         lastName: null
       },
       modifiedAuthor :{
-        authorId: '',
         firstName: null,
         lastName: null
       }
@@ -118,7 +116,6 @@ export default {
           console.log('New author added successfully');
           // Reset the form fields
           this.newAuthor = {
-            authorId: '',
             firstName: null,
             lastName: null
           };
@@ -135,7 +132,7 @@ export default {
       try {
         console.log(this.modifiedAuthor);
         this.modifying = false;
-        const response = await fetch('http://localhost:8080/authors/'+this.modifiedAuthor.authorId, {
+        const response = await fetch('http://localhost:8080/authors/'+this.modifiedAuthor.id, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json'

@@ -54,9 +54,6 @@
       <label for="pages">Pages:</label>
       <input type="number" id="pages" v-model.number="modifiedBook.pages" required>
       <br>
-      <label for="authorId">Author ID:</label>
-      <input type="number" id="authorId" v-model.number="modifiedBook.authorId" required>
-      <br>
       <button type="submit">Modify Book</button>
     </form>
   </div>

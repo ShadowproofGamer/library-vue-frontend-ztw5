@@ -4,9 +4,6 @@
 
 <template>
     <header>
-<!--      <div id="nav">-->
-<!--        -->
-<!--      </div>-->
       <h1>Admin Panel</h1>
       <div class="nav">
         <router-link to="/">Home</router-link>
@@ -17,6 +14,7 @@
     </header>
 
   <router-view></router-view>
+
     <footer>
       <p>Made by Jakub Cebula & Jakub Kozanecki</p>
     </footer>
@@ -48,6 +46,17 @@ header {
     place-items: flex-start;
     flex-wrap: wrap;
   }
+  footer {
+    //display: flex;
+    place-items: center;
+    padding-right: calc(var(--section-gap) / 2);
+  }
+  footer .wrapper {
+    display: flex;
+    place-items: flex-end;
+    flex-wrap: wrap;
+  }
 }
+
 
 </style>
