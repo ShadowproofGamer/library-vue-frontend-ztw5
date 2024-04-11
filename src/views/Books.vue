@@ -1,5 +1,5 @@
 <template>
-  <div class="books" v-if="pagedBooks.length">
+  <div class="books spa" v-if="pagedBooks.length">
     <h1>Books</h1>
     <table>
       <thead>
@@ -16,31 +16,49 @@
         <td>{{ book.pages }}</td>
         <td>{{ book.author.firstName }} {{ book.author.lastName }}</td>
         <td>{{ book.borrowed }}</td>
+        <td><button @click="modifying=true; modifiedBook=book">Update</button></td>
+        <td><button @click="deleteBook(book.bookId)">Delete</button></td>
       </tr>
       </tbody>
     </table>
-    <button @click="prevPage" :disabled="currentPage === 1">Previous</button>
-    <button @click="nextPage" :disabled="currentPage === totalPages">Next</button>
-    <button @click="creating=!creating" v-if="!creating">Dodaj nową książkę</button>
-    <div v-if="creating">
-
-      <h1>Add New Book</h1>
-      <form @submit.prevent="addBook">
-        <label for="title">Title:</label>
-        <input type="text" id="title" v-model="newBook.title" required>
-        <br>
-        <label for="pages">Pages:</label>
-        <input type="number" id="pages" v-model.number="newBook.pages" required>
-        <br>
-        <label for="authorId">Author ID:</label>
-        <input type="number" id="authorId" v-model.number="newBook.authorId" required>
-        <br>
-        <button type="submit">Add Book</button>
-      </form>
+    <div class="option-buttons">
+      <button @click="prevPage" :disabled="currentPage === 1">Previous</button>
+      <button @click="nextPage" :disabled="currentPage === totalPages">Next</button>
+      <button @click="creating=!creating">Add new Book</button>
     </div>
   </div>
   <div v-else>
     <p>Loading data...</p>
+  </div>
+  <div v-if="creating">
+    <h1>Add New Book</h1>
+    <form @submit.prevent="addBook">
+      <label for="title">Title:</label>
+      <input type="text" id="title" v-model="newBook.title" required>
+      <br>
+      <label for="pages">Pages:</label>
+      <input type="number" id="pages" v-model.number="newBook.pages" required>
+      <br>
+      <label for="authorId">Author ID:</label>
+      <input type="number" id="authorId" v-model.number="newBook.authorId" required>
+      <br>
+      <button type="submit">Add Book</button>
+    </form>
+  </div>
+  <div v-if="modifying">
+    <h1>Add New Book</h1>
+    <form @submit.prevent="updateBook">
+      <label for="title">Title:</label>
+      <input type="text" id="title" v-model="modifiedBook.title" required>
+      <br>
+      <label for="pages">Pages:</label>
+      <input type="number" id="pages" v-model.number="modifiedBook.pages" required>
+      <br>
+      <label for="authorId">Author ID:</label>
+      <input type="number" id="authorId" v-model.number="modifiedBook.authorId" required>
+      <br>
+      <button type="submit">Modify Book</button>
+    </form>
   </div>
 </template>
 <script>
@@ -51,7 +69,13 @@ export default {
       pageSize: 5,
       currentPage: 1,
       creating: false,
+      modifying:false,
       newBook: {
+        title: '',
+        pages: null,
+        authorId: null
+      },
+      modifiedBook :{
         title: '',
         pages: null,
         authorId: null
@@ -103,10 +127,11 @@ export default {
           console.log('New book added successfully');
           // Reset the form fields
           this.newBook = {
-            title: '',
-            pages: null,
-            authorId: null
+            userId: '',
+            firstName: null,
+            lastName: null
           };
+          await this.fetchData();
         } else {
           // Error handling if the request fails
           console.error('Failed to add new book');
@@ -115,31 +140,59 @@ export default {
         console.error('Error adding new book:', error);
       }
     },
-    //   addNew(text, pages, authorId) {
-    //     // Example POST method implementation:
-    //     async function postData(url = "http://localhost:8080/books", data = {text, pages, authorId}) {
-    //       // Default options are marked with *
-    //       const response = await fetch(url, {
-    //         method: "POST", // *GET, POST, PUT, DELETE, etc.
-    //         mode: "cors", // no-cors, *cors, same-origin
-    //         cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
-    //         credentials: "same-origin", // include, *same-origin, omit
-    //         headers: {
-    //           "Content-Type": "application/json",
-    //           // 'Content-Type': 'application/x-www-form-urlencoded',
-    //         },
-    //         redirect: "follow", // manual, *follow, error
-    //         referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-    //         body: JSON.stringify(data), // body data type must match "Content-Type" header
-    //       });
-    //       return response.json(); // parses JSON response into native JavaScript objects
-    //     }
-    //
-    //     postData("http://localhost:8080/books", {text: text, pages: pages, authorId: authorId}).then((data) => {
-    //       console.log(data); // JSON data parsed by `data.json()` call
-    //     });
-    //   }
-    // },
+    async updateBook(){
+      try {
+        console.log(this.modifiedBook);
+        this.modifying = false;
+        const response = await fetch('http://localhost:8080/books/'+this.modifiedBook.bookId, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({"title": this.modifiedBook.title, "pages": this.modifiedBook.pages, "authorId": this.modifiedBook.authorId})
+        });
+        if (response.ok) {
+          // Book added successfully
+          console.log('book modified successfully');
+          // Reset the form fields
+          this.modifiedBook = {
+            userId: '',
+            firstName: null,
+            lastName: null
+          };
+          await this.fetchData()
+        } else {
+          // Error handling if the request fails
+          console.error('Failed to modify book');
+        }
+      } catch (error) {
+        console.error('Error modifying book:', error);
+      }
+    },
+    async deleteBook(bookId){
+      try {
+        console.log(bookId);
+        const response = await fetch('http://localhost:8080/books/'+bookId, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+          // body: JSON.stringify(this.modifiedBook)
+        });
+        if (response.ok) {
+          // Book added successfully
+          console.log('book deleted successfully');
+          await this.fetchData()
+          // Reset the form fields
+        } else {
+          // Error handling if the request fails
+          console.error('Failed to delete book');
+        }
+      } catch (error) {
+        console.error('Error deleting book:', error);
+      }
+    }
+
   },
   mounted() {
     this.fetchData();
@@ -149,5 +202,11 @@ export default {
 </script>
 
 <style scoped>
-/* Add your scoped styles here */
+.spa{
+  padding: 3rem;
+}
+.option-buttons{
+  display: flex;
+  place-items: center;
+}
 </style>

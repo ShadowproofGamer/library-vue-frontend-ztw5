@@ -3,9 +3,23 @@
 </script>
 
 <template>
-  <router-link to="/">Home</router-link>
-  <router-link to="/books">Books</router-link>
+    <header>
+<!--      <div id="nav">-->
+<!--        -->
+<!--      </div>-->
+      <h1>Admin Panel</h1>
+      <div class="nav">
+        <router-link to="/">Home</router-link>
+        <router-link to="/books">Books</router-link>
+        <router-link to="/users">Users</router-link>
+        <router-link to="/authors">Authors</router-link>
+      </div>
+    </header>
+
   <router-view></router-view>
+    <footer>
+      <p>Made by Jakub Cebula & Jakub Kozanecki</p>
+    </footer>
 </template>
 
 <style scoped>
@@ -20,7 +34,7 @@ header {
 
 @media (min-width: 1024px) {
   header {
-    display: flex;
+    //display: flex;
     place-items: center;
     padding-right: calc(var(--section-gap) / 2);
   }

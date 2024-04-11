@@ -22,14 +22,30 @@ a,
 }
 
 @media (min-width: 1024px) {
+  header{
+    display: flex;
+    flex-direction: column;
+    /*position: absolute;*/
+    place-items: center;
+    top: 0
+  }
   body {
     display: flex;
+    flex-direction: column;
     place-items: center;
+  }
+  footer{
+    /*display: flex;*/
+    /*flex-direction: column;*/
+    position: absolute;
+    place-items: center;
+    bottom: 0
   }
 
   #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    /*display: grid;*/
+    /*grid-template-columns: 1fr 1fr;*/
     padding: 0 2rem;
+
   }
 }

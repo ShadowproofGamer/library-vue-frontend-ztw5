@@ -9,5 +9,7 @@
 </template>
 
 <style scoped>
-
+template{
+  padding: 3rem;
+}
 </style>
