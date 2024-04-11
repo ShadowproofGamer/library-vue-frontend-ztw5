@@ -202,9 +202,7 @@ export default {
 </script>
 
 <style scoped>
-.spa{
-  padding: 3rem;
-}
+
 .option-buttons{
   display: flex;
   place-items: center;
