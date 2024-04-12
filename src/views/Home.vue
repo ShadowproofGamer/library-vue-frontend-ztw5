@@ -1,15 +1,20 @@
-<script setup>
-
-</script>
-
 <template>
-<div class="home spa">
-  <h1>Home</h1>
-</div>
+  <div class="home spa">
+    <h1>Home</h1>
+  </div>
 </template>
+<script>
+import LayoutDefault from '../layouts/LayoutDefault.vue';
 
+export default {
+  name: 'Home',
+  created() {
+    this.$emit('update:layout', LayoutDefault);
+  },
+};
+</script>
 <style scoped>
-template{
+template {
   padding: 3rem;
 }
 </style>

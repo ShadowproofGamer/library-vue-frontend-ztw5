@@ -1,24 +1,23 @@
-<script setup>
-
-</script>
-
 <template>
-    <header>
-      <h1>Admin Panel</h1>
-      <div class="nav">
-        <router-link to="/">Home</router-link>
-        <router-link to="/books">Books</router-link>
-        <router-link to="/users">Users</router-link>
-        <router-link to="/authors">Authors</router-link>
-      </div>
-    </header>
 
-  <router-view></router-view>
+  <component :is="layout">
+    <router-view :layout.sync="layout"/>
+  </component>
 
-    <footer>
-      <p>Made by Jakub Cebula & Jakub Kozanecki</p>
-    </footer>
+
 </template>
+<script>
+import LayoutDefault from "@/layouts/LayoutDefault.vue";
+
+export default {
+  name: 'App',
+  data() {
+    return {
+      layout: LayoutDefault,
+    };
+  },
+};
+</script>
 
 <style scoped>
 header {

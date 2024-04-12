@@ -25,9 +25,6 @@
       <button @click="creating=!creating">Add new author</button>
     </div>
   </div>
-  <div v-else>
-    <p>Loading data...</p>
-  </div>
   <div v-if="creating">
     <h1>Add New Author</h1>
     <form @submit.prevent="addAuthor">
@@ -53,6 +50,8 @@
   </div>
 </template>
 <script>
+import LayoutDefault from "@/layouts/LayoutDefault.vue";
+
 export default {
   data() {
     return {
@@ -184,7 +183,11 @@ export default {
   },
   mounted() {
     this.fetchData();
-  }
+  },
+  name: 'Authors',
+  created() {
+    this.$emit('update:layout', LayoutDefault);
+  },
 }
 
 </script>

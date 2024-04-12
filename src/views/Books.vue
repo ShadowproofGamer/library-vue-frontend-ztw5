@@ -27,9 +27,6 @@
       <button @click="creating=!creating">Add new Book</button>
     </div>
   </div>
-  <div v-else>
-    <p>Loading data...</p>
-  </div>
   <div v-if="creating">
     <h1>Add New Book</h1>
     <form @submit.prevent="addBook">
@@ -59,6 +56,8 @@
   </div>
 </template>
 <script>
+import LayoutDefault from "@/layouts/LayoutDefault.vue";
+
 export default {
   data() {
     return {
@@ -123,12 +122,14 @@ export default {
           // Book added successfully
           console.log('New book added successfully');
           // Reset the form fields
+          // this.books.push(this.newBook)
           this.newBook = {
             userId: '',
             firstName: null,
             lastName: null
           };
           await this.fetchData();
+
         } else {
           // Error handling if the request fails
           console.error('Failed to add new book');
@@ -193,7 +194,11 @@ export default {
   },
   mounted() {
     this.fetchData();
-  }
+  },
+  name: 'Books',
+  created() {
+    this.$emit('update:layout', LayoutDefault);
+  },
 }
 
 </script>
